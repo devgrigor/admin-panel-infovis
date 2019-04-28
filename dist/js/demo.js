@@ -8,11 +8,17 @@
 
 function updateChart(res) {
   window.graphData = {};
+  window.graphDataIndexes = {};
   res.forEach((val) => {
     // Filtering by index
-    if($('#index').val()) {
-      if(val.Index != $('#index').val()) {
-        return;
+    if($('#index_2').val()) {
+      if(val.Index != $('#index_2').val()) {
+        if($('#index_1').val()) {
+          if(val.Index != $('#index_1').val()) {
+
+            return;
+          }
+        }
       }
     }
 
@@ -27,6 +33,12 @@ function updateChart(res) {
     }
 
     window.graphData[val.Country][val.Year - 2005] = val.Value;
+
+    if(!window.graphDataIndexes[val.Index]) {
+      window.graphDataIndexes[val.Index] = [];
+    }
+
+    window.graphDataIndexes[val.Index][val.Year - 2005] = val.Value;
   });
 
   
@@ -45,11 +57,11 @@ function updateChart(res) {
   const datasets = [];
   const scatterDatasets = [];
   let counter = 0;
-  for (let i in window.graphData) {
+  for (let i in window.graphDataIndexes) {
 
     datasets.push({
       label: i,
-      data: window.graphData[i],
+      data: window.graphDataIndexes[i],
       borderColor: [
         colors[counter++]
       ],
@@ -66,7 +78,11 @@ function updateChart(res) {
 
 
 $(() => {
-  $('#index').change(() => {
+  $('#index_1').change(() => {
+    updateChart(window.allData);
+  });
+
+  $('#index_2').change(() => {
     updateChart(window.allData);
   });
 
@@ -168,7 +184,8 @@ $(() => {
       });
 
       for(let i in indexes) {
-        $('#index').append(`<option>${i}</option>`);
+        $('#index_1').append(`<option>${i}</option>`);
+        $('#index_2').append(`<option>${i}</option>`);
       }
 
       for(let i in countries) {
